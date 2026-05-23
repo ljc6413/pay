@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>京六粮·知己味 — 扫码购买</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 100%;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-align: center;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 28px;
+            letter-spacing: 2px;
+        }
+        .product {
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .product-spec {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
+        }
+        .product-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f6d365;
+        }
+        .product-price small {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .step-guide {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+        .step-guide span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .step-guide .num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+
+        .pay-tabs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .pay-tab {
+            padding: 8px 28px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        .pay-tab.active-wechat {
+            background: #07c160;
+            border-color: #07c160;
+            color: #fff;
+        }
+        .pay-tab.active-alipay {
+            background: #1677ff;
+            border-color: #1677ff;
+            color: #fff;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .qr-image {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            padding: 8px;
+        }
+        .qr-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .qr-label {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .qr-hint {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 20px 0;
+        }
+
+        .form-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 14px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #f6d365;
+        }
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            color: #1a1a2e;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, opacity 0.2s;
+            margin-top: 4px;
+        }
+        .btn-submit:active {
+            transform: scale(0.97);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.15);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 100;
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 28px 20px; }
+            .qr-image { width: 200px; height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">京六粮</div>
+    <div class="subtitle">知 己 味 · 匠 心 酿</div>
+
+    <div class="product">
+        <div class="product-name">京六粮·王者十三年</div>
+        <div class="product-spec">50度 500ml 礼盒装 · 六粮精粹 收率0.9%</div>
+        <div class="product-price">¥3,199 <small>/瓶</small></div>
+    </div>
+
+    <div class="step-guide">
+        <span><span class="num">1</span> 扫码付款</span>
+        <span style="color:rgba(255,255,255,0.1)">→</span>
+        <span><span class="num">2</span> 填写订单</span>
+        <span style="color:rgba(255,255,255,0.1)">→</span>
+        <span><span class="num">3</span> 确认发货</span>
+    </div>
+
+    <div class="pay-tabs">
+        <div class="pay-tab active-wechat" id="tabWechat" onclick="switchTab('wechat')">💚 微信支付</div>
+        <div class="pay-tab" id="tabAlipay" onclick="switchTab('alipay')">💙 支付宝</div>
+    </div>
+
+    <div class="qr-section" id="qrWechat">
+        <div class="qr-image">
+            <img src="wechat-qr.jpg" alt="微信收款码">
+        </div>
+        <div class="qr-label">微信扫码购买</div>
+        <div class="qr-hint">打开微信扫一扫</div>
+    </div>
+
+    <div class="qr-section" id="qrAlipay" style="display:none">
+        <div class="qr-image">
+            <img src="alipay-qr.jpg" alt="支付宝收款码">
+        </div>
+        <div class="qr-label">支付宝扫码购买</div>
+        <div class="qr-hint">打开支付宝扫一扫</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="form-title">📦 付款后填写，确认发货</div>
+
+    <div class="form-group">
+        <input type="text" id="orderName" placeholder="你的姓名" autocomplete="name">
+    </div>
+    <div class="form-group">
+        <input type="tel" id="orderPhone" placeholder="手机号" autocomplete="tel">
+    </div>
+    <div class="form-group">
+        <input type="text" id="orderAmount" placeholder="付款金额（元）" inputmode="decimal">
+    </div>
+    <div class="form-group">
+        <input type="text" id="orderNote" placeholder="备注（如：送礼/自饮/其他）">
+    </div>
+
+    <button class="btn-submit" id="btnSubmit" onclick="submitOrder()">我已付款，确认订单</button>
+
+    <div class="footer">
+        京六粮·知己味 · 问题咨询请找知己味Bot
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let currentTab = 'wechat';
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tabWechat').className = tab === 'wechat' ? 'pay-tab active-wechat' : 'pay-tab';
+        document.getElementById('tabAlipay').className = tab === 'alipay' ? 'pay-tab active-alipay' : 'pay-tab';
+        document.getElementById('qrWechat').style.display = tab === 'wechat' ? 'block' : 'none';
+        document.getElementById('qrAlipay').style.display = tab === 'alipay' ? 'block' : 'none';
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function submitOrder() {
+        const name = document.getElementById('orderName').value.trim();
+        const phone = document.getElementById('orderPhone').value.trim();
+        const amount = document.getElementById('orderAmount').value.trim();
+
+        if (!name) { showToast('请填写姓名'); return; }
+        if (!phone || phone.length < 11) { showToast('请填写正确的手机号'); return; }
+        if (!amount || isNaN(amount) || parseFloat(amount) <= 0) { showToast('请填写正确的付款金额'); return; }
+
+        const btn = document.getElementById('btnSubmit');
+        btn.textContent = '提交中...';
+        btn.disabled = true;
+
+        // 构建飞书Webhook通知（编辑此处URL）
+        const webhookURL = ''; // ← 填入飞书Webhook地址
+
+        const payload = {
+            name: name,
+            phone: phone,
+            amount: amount,
+            note: document.getElementById('orderNote').value.trim(),
+            pay_method: currentTab === 'wechat' ? '微信支付' : '支付宝',
+            product: '京六粮·王者十三年 3199元/瓶',
+            time: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+        };
+
+        if (webhookURL) {
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(function(e) {
+                console.log('Webhook通知失败:', e);
+            });
+        }
+
+        // 显示确认信息
+        setTimeout(function() {
+            btn.textContent = '✅ 订单已提交，客服确认后发货';
+            btn.style.background = 'rgba(255,255,255,0.06)';
+            btn.style.color = '#07c160';
+            showToast('✅ 订单提交成功！');
+        }, 1000);
+    }
+</script>
+</body>
+</html>
